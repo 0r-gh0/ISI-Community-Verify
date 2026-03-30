@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>ISI Alumni Community Verification</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;500;700&family=Source+Serif+4:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Mobile critical fixes ── */
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    input, select {
+      font-size: 16px !important;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    :root {
+      --ink:        #1a1a2e;
+      --muted:      #4a4a6a;
+      --accent:     #2563eb;
+      --accent-lt:  #dbeafe;
+      --success:    #166534;
+      --success-bg: #dcfce7;
+      --error:      #991b1b;
+      --error-bg:   #fee2e2;
+      --warn:       #92400e;
+      --warn-bg:    #fef3c7;
+      --border:     #cbd5e1;
+      --surface:    #f8fafc;
+      --white:      #ffffff;
+      --radius:     10px;
+      --shadow:     0 4px 24px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.05);
+      --transition: .2s cubic-bezier(.4,0,.2,1);
+    }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 60%, #ecfdf5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: var(--ink);
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 540px;
+      overflow: hidden;
+      animation: rise .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(28px) scale(.97); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ── Header strip ── */
+    .card-header {
+      background: linear-gradient(120deg, #1e3a8a 0%, #2563eb 100%);
+      padding: 1.8rem 2.2rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.2rem;
+    }
+    .card-header::before {
+      content: '';
+      position: absolute;
+      right: -30px; bottom: -50px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.05);
+      pointer-events: none;
+    }
+    .header-text { flex: 1; z-index: 1; min-width: 0; }
+    .card-header .badge {
+      display: inline-block;
+      font-family: 'Sora', sans-serif;
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: #bfdbfe;
+      background: rgba(255,255,255,.13);
+      padding: .2rem .6rem;
+      border-radius: 20px;
+      margin-bottom: .65rem;
+    }
+    .card-header h1 {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 1.45rem;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .card-header p {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 300;
+      font-size: .85rem;
+      color: #bfdbfe;
+      margin-top: .38rem;
+    }
+
+    .header-logo {
+      flex-shrink: 0;
+      z-index: 1;
+      width: 74px; height: 74px;
+      background: rgba(255,255,255,.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid rgba(255,255,255,.22);
+      box-shadow: 0 2px 12px rgba(0,0,0,.2);
+    }
+    .header-logo img {
+      width: 58px; height: 58px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    /* ── Form body ── */
+    .card-body { padding: 2rem 2.2rem 2.4rem; }
+    .field-group { margin-bottom: 1.2rem; }
+
+    label {
+      display: block;
+      font-family: 'Sora', sans-serif;
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .42rem;
+    }
+    label .req { color: var(--accent); margin-left: .2rem; font-size: .85em; }
+    label .opt {
+      color: #94a3b8; font-weight: 300; text-transform: none;
+      letter-spacing: 0; font-size: .85em; margin-left: .3rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: .68rem 1rem;
+      font-family: 'Source Serif 4', serif;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+      appearance: none;
+    }
+    input::placeholder { color: #b0b7c3; }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-lt);
+      background: var(--white);
+    }
+
+    /* Phone row */
+    .phone-row { display: flex; gap: .5rem; align-items: stretch; }
+    .cc-wrap { flex: 0 0 30%; max-width: 130px; min-width: 90px; position: relative; }
+    .cc-wrap select { width: 100%; height: 100%; }
+    .cc-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: .6rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: .72rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .phone-input-wrap { flex: 1 1 0; min-width: 0; }
+
+    /* Select arrow */
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 1rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: .78rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    select { cursor: pointer; padding-right: 2rem; }
+
+    /* Other reveal */
+    .other-field {
+      overflow: hidden;
+      max-height: 0; opacity: 0;
+      transition: max-height .3s ease, opacity .28s ease, margin-top .25s ease;
+    }
+    .other-field.open { max-height: 72px; opacity: 1; margin-top: .55rem; }
+    .other-field input { border-color: #93c5fd; background: #eff6ff; }
+
+    .field-hint {
+      font-size: .73rem; color: var(--muted);
+      margin-top: .3rem;
+      font-family: 'Sora', sans-serif; font-weight: 300;
+    }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Dividers */
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0 1.3rem; }
+    .divider-label {
+      text-align: center;
+      font-family: 'Sora', sans-serif;
+      font-size: .67rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: #94a3b8;
+      margin: -1.05rem 0 1.15rem;
+    }
+    .divider-label span { background: var(--white); padding: 0 .75rem; }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%; margin-top: 1.5rem;
+      padding: .85rem 1rem;
+      font-family: 'Sora', sans-serif;
+      font-size: .92rem; font-weight: 600; letter-spacing: .025em;
+      color: var(--white);
+      background: linear-gradient(120deg, #1e40af 0%, #2563eb 100%);
+      border: none; border-radius: var(--radius); cursor: pointer;
+      transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 4px 14px rgba(37,99,235,.35);
+    }
+    .btn-submit:hover:not(:disabled) {
+      opacity: .9; transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37,99,235,.42);
+    }
+    .btn-submit:active:not(:disabled) { transform: scale(.98); }
+    .btn-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    /* Alerts */
+    .alert {
+      display: none; border-radius: var(--radius);
+      padding: .8rem 1rem; font-size: .85rem;
+      font-family: 'Sora', sans-serif;
+      margin-top: 1.1rem; line-height: 1.5;
+      animation: fadeIn .3s ease both;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(5px);} to { opacity:1; transform:none; } }
+    .alert.visible { display: flex; align-items: flex-start; gap: .5rem; }
+    .alert-icon { font-size: .95rem; flex-shrink: 0; margin-top: .12rem; }
+    .alert-error { background: var(--error-bg); color: var(--error); border: 1px solid #fca5a5; }
+    .alert-warn  { background: var(--warn-bg);  color: var(--warn);  border: 1px solid #fcd34d; }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block; width: 1em; height: 1em;
+      border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle; margin-right: .4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Success screen */
+    #success-screen {
+      display: none; flex-direction: column;
+      align-items: center; text-align: center;
+      padding: 2.8rem 2.4rem 3rem;
+      animation: rise .45s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    #success-screen.visible { display: flex; }
+    .tick-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--success-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.1rem; margin-bottom: 1.4rem;
+      box-shadow: 0 0 0 8px #bbf7d0;
+    }
+    #success-screen h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--success); margin-bottom: .75rem;
+    }
+    #success-screen p {
+      color: var(--muted); font-size: .88rem;
+      line-height: 1.75; max-width: 380px;
+    }
+    #success-screen .success-note {
+      margin-top: 1.1rem;
+      font-family: 'Sora', sans-serif;
+      font-size: .75rem;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    @media (max-width: 480px) {
+      .card-header { padding: 1.4rem 1.4rem 1.2rem; }
+      .header-logo { width: 60px; height: 60px; }
+      .header-logo img { width: 46px; height: 46px; }
+      .card-header h1 { font-size: 1.25rem; }
+      .card-body { padding: 1.5rem 1.4rem 2rem; }
+      .row-2 { grid-template-columns: 1fr; gap: .75rem; }
+      .phone-row { gap: .35rem; }
+      .cc-wrap { flex: 0 0 32%; min-width: 85px; max-width: 110px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="card">
+
+  <!-- ══ HEADER ══════════════════════════════════════════ -->
+  <div class="card-header">
+    <div class="header-text">
+      <div class="badge">ISI Alumni Community Registration</div>
+      <h1>Community Verification</h1>
+      <p>Fill in your details to verify your membership.</p>
+    </div>
+    <div class="header-logo" title="Indian Statistical Institute">
+      <img src="https://raw.githubusercontent.com/0r-gh0/ISI-Community-Verify/refs/heads/main/ISI_LOGO_NEW.png"
+           alt="ISI Logo" />
+    </div>
+  </div>
+
+  <!-- ══ FORM ════════════════════════════════════════════ -->
+  <div class="card-body" id="form-section">
+
+    <!-- 1. Full Name -->
+    <div class="field-group">
+      <label for="name">Full Name <span class="req">*</span></label>
+      <input type="text" id="name" name="name"
+             placeholder="Your full name" autocomplete="name" required />
+    </div>
+
+    <!-- 2. Phone Number -->
+    <div class="field-group">
+      <label>Phone Number <span class="req">*</span></label>
+      <div class="phone-row">
+        <div class="cc-wrap">
+          <select id="countryCode" name="countryCode" aria-label="Country code">
+            <option value="91">🇮🇳 +91</option>
+            <option value="1">🇺🇸 +1</option>
+            <option value="44">🇬🇧 +44</option>
+            <option value="61">🇦🇺 +61</option>
+            <option value="1">🇨🇦 +1</option>
+            <option value="49">🇩🇪 +49</option>
+            <option value="33">🇫🇷 +33</option>
+            <option value="81">🇯🇵 +81</option>
+            <option value="82">🇰🇷 +82</option>
+            <option value="65">🇸🇬 +65</option>
+            <option value="60">🇲🇾 +60</option>
+            <option value="971">🇦🇪 +971</option>
+            <option value="966">🇸🇦 +966</option>
+            <option value="880">🇧🇩 +880</option>
+            <option value="977">🇳🇵 +977</option>
+            <option value="94">🇱🇰 +94</option>
+            <option value="64">🇳🇿 +64</option>
+            <option value="41">🇨🇭 +41</option>
+            <option value="46">🇸🇪 +46</option>
+            <option value="45">🇩🇰 +45</option>
+            <option value="31">🇳🇱 +31</option>
+            <option value="39">🇮🇹 +39</option>
+            <option value="34">🇪🇸 +34</option>
+            <option value="55">🇧🇷 +55</option>
+            <option value="other">🌍 Other</option>
+          </select>
+        </div>
+        <div class="phone-input-wrap">
+          <input type="tel" id="phone" name="phone"
+                 placeholder="Number without country code"
+                 autocomplete="tel-national" required />
+        </div>
+      </div>
+      <div class="field-hint">Select your country code, then enter your number without it.</div>
+    </div>
+
+    <hr class="divider" />
+    <div class="divider-label"><span>Academic Details</span></div>
+
+    <!-- 3. ISI Center -->
+    <div class="field-group">
+      <label for="isiCenter">ISI Center <span class="req">*</span></label>
+      <div class="select-wrap">
+        <select id="isiCenter" name="isiCenter" required
+                onchange="toggleOther('isiCenter','isiCenterOtherBox')">
+          <option value="" disabled selected>Select your center</option>
+          <option value="Kolkata">Kolkata</option>
+          <option value="Delhi">Delhi</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Chennai">Chennai</option>
+          <option value="Tezpur">Tezpur</option>
+          <option value="Giridih">Giridih</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="other-field" id="isiCenterOtherBox">
+        <input type="text" id="isiCenterOtherInput"
+               placeholder="Please specify your center" />
+      </div>
+    </div>
+
+    <!-- 4. Highest Qualifying Degree -->
+    <div class="field-group">
+      <label for="course">Highest Qualifying Degree <span class="req">*</span></label>
+      <div class="select-wrap">
+        <select id="course" name="course" required
+                onchange="toggleOther('course','courseOtherBox')">
+          <option value="" disabled selected>Select your degree</option>
+          <optgroup label="── Undergraduate ──">
+            <option value="BSDS">BSDS</option>
+            <option value="BMath">BMath</option>
+            <option value="BStat">BStat</option>
+          </optgroup>
+          <optgroup label="── Postgraduate ──">
+            <option value="MMath">MMath</option>
+            <option value="MSLIB">MSLIB</option>
+            <option value="MSQE">MSQE</option>
+            <option value="MSQMS">MSQMS</option>
+            <option value="MStat">MStat</option>
+            <option value="MTech CrS">MTech CrS</option>
+            <option value="MTech CS">MTech CS</option>
+            <option value="MTech QROR">MTech QROR</option>
+          </optgroup>
+          <optgroup label="── Research ──">
+            <option value="PhD">PhD</option>
+          </optgroup>
+          <optgroup label="── Diploma / Certificate ──">
+            <option value="PG Diploma">PG Diploma</option>
+          </optgroup>
+          <optgroup label="── Non-Student ──">
+            <option value="Faculty">Faculty</option>
+            <option value="Staff / Intern">Staff / Intern</option>
+          </optgroup>
+          <optgroup label="── Other ──">
+            <option value="Other">Other (specify)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="other-field" id="courseOtherBox">
+        <input type="text" id="courseOtherInput"
+               placeholder="Please specify your degree" />
+      </div>
+    </div>
+
+    <!-- 5. Start Year → End Year -->
+    <div class="row-2">
+      <div class="field-group">
+        <label for="yearStart">Start Year <span class="req">*</span></label>
+        <div class="select-wrap">
+          <select id="yearStart" name="yearStart" required>
+            <option value="" disabled selected>Select</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label for="yearEnd">End Year <span class="req">*</span></label>
+        <div class="select-wrap">
+          <select id="yearEnd" name="yearEnd" required>
+            <option value="" disabled selected>Select</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="field-hint" style="margin-top:-.55rem;margin-bottom:.9rem;">
+      Your enrollment start and graduation (or expected) year.
+    </div>
+
+    <hr class="divider" />
+    <div class="divider-label"><span>Optional</span></div>
+
+    <!-- 6. Email -->
+    <div class="field-group">
+      <label for="email">Email Address <span class="opt">(optional)</span></label>
+      <input type="email" id="email" name="email"
+             placeholder="you@example.com" autocomplete="email" />
+    </div>
+
+    <!-- 7. Country of Residence -->
+    <div class="field-group">
+      <label for="country">Country of Residence <span class="opt">(optional)</span></label>
+      <input type="text" id="country" name="country"
+             placeholder="e.g. India, USA, Germany…" autocomplete="country-name" />
+      <div class="field-hint">Leave blank to default to <strong>India</strong>.</div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert alert-error" id="alert-error">
+      <span class="alert-icon">✕</span>
+      <span id="alert-error-msg"></span>
+    </div>
+    <div class="alert alert-warn" id="alert-warn">
+      <span class="alert-icon">⚠</span>
+      <span id="alert-warn-msg"></span>
+    </div>
+
+    <button class="btn-submit" id="btn-submit" type="button" onclick="handleSubmit()">
+      Submit &amp; Verify
+    </button>
+  </div><!-- /form-section -->
+
+  <!-- ══ SUCCESS SCREEN ══════════════════════════════════ -->
+  <div id="success-screen">
+    <div class="tick-circle">✓</div>
+    <h2>Form Submitted Successfully</h2>
+    <p>
+      Thank you for registering with the <strong>ISI Alumni Community</strong>.<br/>
+      Our admins are currently reviewing your response.<br/><br/>
+      If any discrepancy is found in your submission,<br/>
+      you will be contacted for clarification.
+    </p>
+    <div class="success-note">
+      We appreciate your patience. Welcome aboard! 🌳
+    </div>
+  </div>
+
+</div><!-- /.card -->
+
+<script>
+/* ── Year dropdowns ── */
+(function() {
+  const now     = new Date().getFullYear();
+  const startSel= document.getElementById('yearStart');
+  const endSel  = document.getElementById('yearEnd');
+  for (let y = now; y >= 1962; y--)     startSel.add(new Option(y, y));
+  for (let y = now + 6; y >= 1962; y--) endSel.add(new Option(y, y));
+})();
+
+/* ── Toggle "Other" reveal ── */
+function toggleOther(selectId, boxId) {
+  const val = document.getElementById(selectId).value;
+  document.getElementById(boxId).classList.toggle('open', val === 'Other');
+}
+
+/* ── Alert helpers ── */
+function showAlert(type, msg) {
+  hideAlerts();
+  const isErr = (type === 'error');
+  document.getElementById(isErr ? 'alert-error-msg' : 'alert-warn-msg').textContent = msg;
+  const el = document.getElementById(isErr ? 'alert-error' : 'alert-warn');
+  el.classList.add('visible');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideAlerts() {
+  document.getElementById('alert-error').classList.remove('visible');
+  document.getElementById('alert-warn').classList.remove('visible');
+}
+
+/* ── Submit ── */
+function handleSubmit() {
+  hideAlerts();
+
+  const name        = document.getElementById('name').value.trim();
+  const phoneDigits = document.getElementById('phone').value.trim().replace(/\D/g, '');
+  const cc          = document.getElementById('countryCode').value;
+
+  const isiSel   = document.getElementById('isiCenter').value;
+  const isiCenter= isiSel === 'Other'
+    ? document.getElementById('isiCenterOtherInput').value.trim() : isiSel;
+
+  const courseSel = document.getElementById('course').value;
+  const course    = courseSel === 'Other'
+    ? document.getElementById('courseOtherInput').value.trim() : courseSel;
+
+  const yearStart = document.getElementById('yearStart').value;
+  const yearEnd   = document.getElementById('yearEnd').value;
+  const email     = document.getElementById('email').value.trim();
+  const country   = document.getElementById('country').value.trim();
+
+  // ── Client-side validation ──
+  if (!name)                           { showAlert('error', 'Full name is required.'); return; }
+  if (!phoneDigits || phoneDigits.length < 5)
+                                       { showAlert('error', 'Please enter a valid phone number.'); return; }
+  if (!isiSel)                         { showAlert('error', 'Please select your ISI Center.'); return; }
+  if (isiSel === 'Other' && !isiCenter){ showAlert('error', 'Please specify your ISI Center.'); return; }
+  if (!courseSel)                      { showAlert('error', 'Please select your degree.'); return; }
+  if (courseSel === 'Other' && !course){ showAlert('error', 'Please specify your degree.'); return; }
+  if (!yearStart)                      { showAlert('error', 'Please select your start year.'); return; }
+  if (!yearEnd)                        { showAlert('error', 'Please select your end year.'); return; }
+  if (parseInt(yearEnd) < parseInt(yearStart))
+                                       { showAlert('error', 'End year cannot be before start year.'); return; }
+
+  const data = {
+    name,
+    phone:       phoneDigits,
+    countryCode: cc === 'other' ? '' : cc,
+    isiCenter,
+    course,
+    yearStart,
+    yearEnd,
+    year: yearStart + '–' + yearEnd,
+    email,
+    country,
+  };
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Verifying…';
+
+  google.script.run
+    .withSuccessHandler(function(result) {
+      btn.disabled = false;
+      btn.innerHTML = 'Submit &amp; Verify';
+      if (result.success) {
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('success-screen').classList.add('visible');
+      } else {
+        const isPhoneWarn = result.message &&
+          (result.message.includes('WhatsApp') || result.message.includes('Community'));
+        showAlert(isPhoneWarn ? 'warn' : 'error',
+                  result.message || 'Something went wrong. Please try again.');
+      }
+    })
+    .withFailureHandler(function(err) {
+      btn.disabled = false;
+      btn.innerHTML = 'Submit &amp; Verify';
+      showAlert('error', 'Server error: ' + (err.message || err));
+    })
+    .submitForm(data);
+}
+</script>
+</body>
+</html>
